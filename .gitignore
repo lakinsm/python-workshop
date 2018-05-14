@@ -1,0 +1,7 @@
+# latex files
+*.aux
+*.log
+*.out
+*.tex.backup
+*.toc
+
