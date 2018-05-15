@@ -74,7 +74,7 @@ Namespaces are one honking great idea -- let's do more of those!
 \section{Introduction}
 \par
 With the advent of big data and the need for automation of repetitive tasks, basic programming
-skills are becoming a necessary skill for working in many fields. However, much of the instructional
+skills are becoming a necessity for working in many fields. However, much of the instructional
 material on programming is intended to build a very solid foundation in programming basics. For our
 purposes, we can skip the details of rudimentary programming and take a more hands-on approach to
 basic scripting, since this is much of what we as non-computer scientists will be doing. We will be
@@ -640,14 +640,243 @@ conditionally perform certain blocks of code.
 
 \pagebreak
 \subsection{If Statements}
+If statements begin with an \textbf{if}, include a conditional statement and operator, have some code body 
+similar to a function, and will optionally include additional statements and conditionals with one or more 
+\textbf{elif} (else if) statements and optionally ending with an \textbf{else} statement.  Here is an example:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> a = 4
+>>> b = 3
+>>> if a > 4:
+...     print("a greater than 4")
+... elif a > b:
+...     print("a greater than b")
+... elif b > a:
+...     print("b greater than a")
+... else:
+...     print("Don't know")
+... 
+a greater than b
+\end{lstlisting}
+\vspace{3mm}
+
+Notice how we maintain the use of indentation to describe blocks of code for the body of statements, 
+exactly the same as for function definitions.  There can be as many lines of code as are needed between 
+these statements, as long as they all have the same indentation.  You can also nest if statements with 
+an additional level of indentation:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> a = 4
+>>> b = 3
+>>> if a is 4:
+...     if b is 3:
+...             print("a = 4 and b = 3")
+... 
+a = 4 and b = 3
+>>> if a is 4 and b is 3:
+...     print("a = 4 and b = 3")
+... 
+a = 4 and b = 3
+\end{lstlisting}
+\vspace{3mm}
+
+The \textbf{and} conjunction can be used to chain together conditionals, or you can simply nest them; 
+either way is equivalent, however usually programmers consider the nesting of compound logicals to 
+be redundant and unnecessary.  To reiterate, if-elif-else statements must begin with an if statement, 
+elif and else are optional, and there can be multiple elifs but only one else.  We will be using 
+logicals quite frequently in our future Rosalind challenges.  Now, onto the workhorse of programming: 
+loops.
 
 \pagebreak
 \subsection{For Loops and Comprehension}
+The reason we store values in data structures is typically to use them later, and when we're dealing 
+with thousands or millions of values, we can't reasonably access them one at a time.  Loops allow us 
+to \textbf{iterate} over a large number of values \textit{very quickly} and perform some manipulation 
+on them.  Perhaps it will be to generate and fill new lists or to read in a large file and iterate 
+over its lines looking for or storing information as we go, but loops will always be the solution 
+to repetitive tasks in programming.  The flow statement for loops is \textbf{for}, used as so:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> for i in range(1, 10):
+...     print(i)
+... 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+\end{lstlisting}
+\vspace{3mm}
+
+The overall construction for a \textbf{for loop} is ``for variable in object/iterator:'', where 
+we are either looping over some data, perhaps stored in a list or dictionary, or we are generating 
+new data in the loop, such as in the example above.  The \textbf{range} function creates a set of 
+numbers between the start and stop arguments, in this case 1 and 10; we can then use this object 
+as the basis for our for loop.  We technically don't have to use the variable (in this case i); 
+if we simply wanted to print ``Hello world'' 9 times, we could instead do that:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> for i in range(1, 10):
+...     print("Hello world")
+... 
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+Hello world
+\end{lstlisting}
+\vspace{3mm}
+
+Of course, the most commonly used construction of loops is to iterate over some data structure, such 
+as a list or dictionary.  Here, we will create a list with several elements, iterate over them, and 
+find a specific value and print it out to the Interpreter.
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mylist = ["Arthur", "Lancelot", "Gawain", "Galahad"]
+>>> for knight in mylist:
+...     if knight is "Arthur" or knight is "Galahad":
+...             print(knight)
+... 
+Arthur
+Galahad
+\end{lstlisting}
+\vspace{3mm}
+
+You can start to see the general pattern of programming at this point: we have some data, store that data 
+in the appropriate data structure, manipulate that data depending on our task, and output something 
+that we need.  Generally, it is best practice to write \textbf{functions} that perform a specific task; 
+we will cover coding best practices later, but this practice helps us to compartmentalize our 
+operations and makes our code much more legible when you need to revisit it or share it later.  
+Here is an example of a function that repeats text a certain amount of time depending on its 
+arguments:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> def text_repeat(text, n_times):
+...     for i in range(n_times):
+...             print(text)
+... 
+>>> text_repeat("Hello world", 3)
+Hello world
+Hello world
+Hello world
+\end{lstlisting}
+\vspace{3mm}
+
+In addition to these standard loop constructions, Python has sought to be elegant in its ability 
+to generate data objects on the fly, so anytime we're creating a list, dictionary, or array, we also 
+have the option of looping using \textbf{comprehension}.  Comprehension is a quick, one-line way to 
+generate data into a data structure, and it can be quite useful.  Here are examples of list and 
+dictionary comprehension:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mylist = [x for x in range(10)]
+>>> mylist
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> mylist = [x * 3 for x in range(10)]
+>>> mylist
+[0, 3, 6, 9, 12, 15, 18, 21, 24, 27]
+
+>>> foo = [["foo", "bar"], ["bar", "foo"], ["foobar", "barfoo"]]
+>>> mydict = {k:v for k, v in foo}
+>>> mydict
+{'foo': 'bar', 'bar': 'foo', 'foobar': 'barfoo'}
+\end{lstlisting}
+\vspace{3mm}
+
+Now we're cooking with gas; what you have learned so far should be enough to carry you through basic 
+scripting.  There are a few more topics that may help, however, for specific situations where we 
+need more control over our flow statements.  In the next section, we will be covering a new type 
+of loop that is used for specific cases and statements that will allow us to control flow.
 
 \pagebreak
 \subsection{While Loops and Control of Flow}
+In certain situations, we want to continue iterating indefinitely until we detect a certain value, 
+and at that point, we want to cease iteration.  This task is well-suited to either a \textbf{while} 
+loop with a conditional or a \textbf{while} loop with a \textbf{break} statement.  While loops will 
+continue iteration until the condition is satisfied or it gets told to stop by a control of flow 
+statement.  It's easiest just to see it in action, so here it goes:
 
-First, we will apply the skills described in this section to a Rosalind problem. \\
+\vspace{3mm}
+\begin{lstlisting}
+>>> x = 1
+>>> while x != 64:
+...     x *= 2
+...     print(x)
+... 
+2
+4
+8
+16
+32
+64
+
+>>> x = 1
+>>> while True:
+...     x *= 2
+...     print(x)
+...     if x == 64:
+...             break
+... 
+2
+4
+8
+16
+32
+64
+\end{lstlisting}
+\vspace{3mm}
+
+Here, we continue multiplying the value held in x by 2 and printing it until it reaches the value of 64, 
+at which time we cease iteration.  This can also be done with a conditional and break statement, as seen 
+above.  Be careful with the \textbf{while True} construction: if a break statement condition is never 
+satisfied, you will have an infinite loop and will have to restart Python in order to stop it from looping on 
+your computer forever.  While loops can be helpful when we don't know the size or number of elements we will 
+be handling, for instance while reading in data from a file that is too big to open all at once, so we have 
+to iterate through it line by line until we reach the end.  The other major control of flow statement is 
+the \textbf{continue} statement, which allows us to skip an iteration if a condition is satisfied:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> for x in range(10):
+...     if x > 6:
+...             continue
+...     else:
+...             print(x)
+... 
+0
+1
+2
+3
+4
+5
+6
+\end{lstlisting}
+\vspace{3mm}
+
+All code that is after the continue statement is never reached, and we continue to the beginning of the 
+next iteration within the loop.  This can be useful if there are values we know we won't be using, so 
+we can save time and not execute the code for those values.  \par
+
+And... that's really all there is to the basics of programming.  Not too bad, right?  Of course, we 
+still need to transition away from using the Python Interpreter and begin to write actual scripts: the 
+cornerstone of the Bioinformatician's toolbox.  We will be covering scripting in the next section along 
+with several common scripting tasks, such as reading and writing files from your computer.  
+But first, we will apply the skills described in this section to a Rosalind problem. \\
 \\
 \textbf{Rosalind Problem 2: Transcribing DNA into RNA} \\
 \href{http://rosalind.info/problems/rna/?class=246}{Click here} to visit this problem on Rosalind \\
