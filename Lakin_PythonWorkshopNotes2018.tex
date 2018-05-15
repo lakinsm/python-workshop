@@ -353,6 +353,409 @@ that prints out the number of ACGT nucleotides in that order:
 
 \pagebreak
 \subsection{Data Structures}
+Data structures are used to store information in a group or organized context; each kind of data structure was 
+designed in Python with a certain use in mind, so each has its advantages and disadvantages.  One of the most 
+common uses of data structures in coding is to store multiple values in a specific order.  The ordered data 
+structures in Python include the \textbf{list} and \textbf{array}.  The primary differences between lists 
+and arrays is that values within a list can be modified after creation while arrays cannot; this translates 
+into a speed advantage computationally when using arrays, since the computer knows they won't be modified 
+after the fact.  However, for the majority of applications, lists will be what you choose to use, as often 
+we want to retain the ability to modify the values of the list. \par
+
+Lists in Python are defined using square braces [ ], and each element is associated with a position in the 
+list.  These positions \textbf{start at 0} for the first element; in computer science, this is referred to 
+as a \textbf{zero-indexed} language.  Here is an example of a list and how we can access each element of the 
+list using zero-indexed integers:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mylist = ["one", "two", "three"]
+>>> mylist[0]
+'one'
+>>> mylist[1]
+'two'
+>>> mylist[2]
+'three'
+\end{lstlisting}
+\vspace{3mm}
+
+Here, the variable $mylist$ stores the list, and we access each element of the list using square braces immediately 
+following the variable name.  In Python, this is called \textbf{slicing} the list, since the slicing notation can 
+do more than just access a single value at a time; we can obtain multiple values in a chunk by using the inherent 
+slicing notation: \\
+\\
+mylist[start:stop:by]
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mylist = [1, 2, 3, 4, 5]
+>>> mylist[0:3]
+[1, 2, 3]
+>>> mylist[0:5]
+[1, 2, 3, 4, 5]
+>>> mylist[3:5]
+[4, 5]
+>>> mylist[::-1]
+[5, 4, 3, 2, 1]
+>>> mylist[::2]
+[1, 3, 5]
+>>> mylist[::3]
+[1, 4]
+\end{lstlisting}
+\vspace{3mm}
+
+Here, we access chunks of the list by using the start:stop notation, where the start is the index of the value we 
+want to start at, and the stop is the index \textbf{of the element to the right} of where we want to stop.  It may 
+be easier to visualize it like so:
+
+\[
+ [_01, _12, _23, _34, _45_5]
+\]
+
+In the example above, the subscripts represent the slicing index positions, so to obtain the numbers 1, 2, 3, we 
+would slice from 0 to 3.  The optional third command in the slicing notation is the \textbf{by} notation.  This 
+returns elements \textbf{by every X index}, so for instance if we wanted every other number in the list, we would 
+slice the whole list by 2, as in the code block above: mylist[::2].  Leaving a start or stop field empty is shorthand 
+notation for ``the beginning of the list'' and ``the end of the list,'' respectively.  If you provide a negative number 
+in the by position, this reverses the list and otherwise behaves the same as the normal by notation.  Finally, 
+we can add elements to the list using two different methods: the \textbf{addition operator} and the \textbf{append function}:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mylist = []
+>>> mylist + [0, 1]
+[0, 1]
+>>> mylist += [0, 1]
+>>> mylist
+[0, 1]
+>>> mylist.append(2)
+>>> mylist
+[0, 1, 2]
+\end{lstlisting}
+\vspace{3mm}
+
+Pay close attention to the second and third line of code above: in the first with the addition operator alone, 
+we simply printed out the 0 and 1 added to the list, but we didn't permanently modify the list.  
+To permanently add the elements to the end of the list, we had to use the addition operator in combination with 
+the equals sign operator, a construction that is commonly referred to as an \textbf{increment} operation.  For 
+completeness, we will digress momentarily to show that this increment operation can be performed also on other 
+data types and structures, such as integers and arrays:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> a = 1
+>>> a += 1
+>>> print(a)
+2
+>>> myarray = ("one", "two")
+>>> myarray += ("three", )
+>>> myarray
+('one', 'two', 'three')
+\end{lstlisting}
+\vspace{3mm}
+
+The \textbf{array} data structure is defined by parentheses as seen above and operates similarly to the list, 
+however we cannot modify 
+the values of an array; the property of lists that allows them to be modified is called \textbf{mutability}, 
+and we call lists \textbf{mutable} while arrays are \textbf{immutable}:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mylist = [0, 1, 2]
+>>> myarray = (0, 1, 2)
+>>> mylist[1] = 3
+>>> mylist
+[0, 3, 2]
+>>> myarray[1] = 3
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+\end{lstlisting}
+\vspace{3mm}
+
+In Python, arrays are technically called \textbf{tuples}, however the vast majority of other languages 
+call their similar data structure arrays, so we will use that terminology here for convenience.  There 
+are physical differences in how lists and arrays interface with your computer that give them the 
+properties that define them; we will cover these semantics later in a section that discusses what 
+a computer actually is and how basic operations are performed.  For now, we still have two important 
+data structures to cover: the \textbf{dictionary} and the \textbf{set}, which are the two native 
+\textbf{unordered} data structures. \par
+
+When order of the values in a group does not matter, we can use the unordered data structures.  The first, 
+called a \textbf{set}, can be thought of the same way as the mathematical definition of a set: a group 
+of things, whether that be strings, integers, floats, or even other data structures like arrays or lists.  
+A set is useful because \textbf{checking for membership is very fast}.  We will digress into some basics 
+of computer science algorithms later in the course, however for now know that the use case of a set is 
+\textbf{to collect items} and \textbf{to check if an item is in the set}.  Sets are defined explicitly 
+by name in Python, and we add elements to them with the \textbf{add} function.  We can then check for 
+membership by asking if a value is in the set:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> myset = set()
+>>> myset
+set()
+>>> myset.add(1)
+>>> myset.add(2)
+>>> myset
+{1, 2}
+>>> myset.add(1)
+>>> myset
+{1, 2}
+>>> 1 in myset
+True
+>>> 3 in myset
+False
+\end{lstlisting}
+\vspace{3mm}
+
+Notice that sets don't store duplicate values; when we try to add a duplicate value to the set, the set 
+automatically checks for membership first and only adds the value if the value is not yet present in 
+the set.  This is useful for collecting unique values.  While sets are quite useful, a more common 
+data structure that we will need to use is called the \textbf{dictionary}. \par
+
+Dictionaries \textbf{relate values together} and are often called \textbf{associative arrays} in other 
+programming languages, since they associate a \textbf{key} with a \textbf{value}.  These associations 
+are often called \textbf{key-value pairs} and are extraordinarily common in basic programming tasks.  
+Let's say we have names and phone numbers and we would like to relate them together; we can do this 
+by creating a dictionary.  Note that dictionary keys must be unique, while values can be duplicated.  
+We commonly add to dictionaries using two methods: the \textbf{index operator}, 
+and the \textbf{update} function; however, there are more ways to add to dictionaries if you're interested 
+in reading the Python documentation.
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mydict = {"John Doe": "970-555-0001", "Jane Doe": "970-555-0002"}
+>>> mydict
+{'John Doe': '970-555-0001', 'Jane Doe': '970-555-0002'}
+>>> mydict["James Smith"] = "970-555-1234"
+>>> mydict
+{'John Doe': '970-555-0001', 
+'Jane Doe': '970-555-0002', 
+'James Smith': '970-555-1234'}
+>>> mydict.update({"Jane Smith": "970-555-1235"})
+>>> mydict
+{'John Doe': '970-555-0001', 
+'Jane Doe': '970-555-0002', 
+'James Smith': '970-555-1234', 
+'Jane Smith': '970-555-1235'}
+\end{lstlisting}
+\vspace{3mm}
+
+Notice that the keys are displayed left of the colon and the values with which they are associated are 
+displayed on the right side of the colon.  We can also access lists of the keys and values separately 
+with the \textbf{keys} and \textbf{values} functions, respectively.  Checking for membership is also 
+useful, and by default we check for membership in the keys, since they are unique, however we also
+can force Python to check for membership in the values by explicitly stating that:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mydict = {1: "red", 2: "blue", 3:"green"}
+>>> mydict.keys()
+dict_keys([1, 2, 3])
+>>> mydict.values()
+dict_values(['red', 'blue', 'green'])
+>>> 1 in mydict
+True
+>>> 4 in mydict
+False
+>>> "red" in mydict
+False
+>>> "red" in mydict.values()
+True
+\end{lstlisting}
+\vspace{3mm}
+
+There are many more aspects to dictionaries that we will not cover here for brevity; I suggest if you're 
+interested in the versatility of dictionaries to read the Python documentation on them in detail.  For now, 
+simply know that dictionaries store key-value pairs, and that such a data structure is highly useful in 
+many programming contexts.  We will see concrete examples of why this is the case in the Rosalind problems. \par
+
+As an aside, there are many other data structures available in other Python packages, but with these four 
+core data structures, you're ready to start learning the truly useful part of programming: \textbf{logic} and 
+\textbf{flow}.  There will be no Rosalind problem for this section, since we have to learn the next topics 
+to do anything intermediate in programming.
+
+
+\pagebreak
+\section{Logic and Control of Flow}
+\subsection{Conditional Operators}
+Logic is a foundational concept in computer science and programming; when we encounter certain values, 
+we often want to do something or store those values differently depending on some condition.  Perhaps 
+we see a value that is interesting, so we want to keep it, however we don't want to keep uninteresting 
+values.  Perhaps we only want to add an element to a list if it isn't already in the list (though 
+if you remember last section, you could use a set for this instead!).  Logic in Python is very 
+simple compared to other language, and the developers of Python have tried to make conditional logic 
+statements match what you are thinking in your head when you're working on a problem.  They also 
+support the standard language conditional statements and operators as well, if you're not comfortable 
+using the Pythonic approach.  \par
+
+Perhaps the most simple conditional statement is the \textbf{in} statement; this checks for membership 
+in a data structure for a value or even another data structure.  The \textbf{in} statement has 
+some computational cost depending on the data structure, but it can be used with almost anything:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> mystring = "ACCGTG"
+>>> "A" in mystring
+True
+>>> mylist = [1, 2, 3]
+>>> 2 in mylist
+True
+>>> 2 not in mylist
+False
+\end{lstlisting}
+\vspace{3mm}
+
+Notice two aspects about the above code: to check for membership, we use \textbf{in}, and to check for the 
+opposite condition, we simply add a \textbf{not} in front of the \textbf{in} statement.  Secondly, 
+\textbf{conditionals return boolean values}, either True or False.  These values can then be used to 
+create logic that performs certain code on some values and not others.  If anyone is nerdy like me 
+about computer science topics and wants to know where this idea originated, you can follow 
+\href{https://en.wikipedia.org/wiki/Logic_gate}{this link} to learn more about logic gates. \par
+
+The following are the \textbf{Python conditional operators} that we can use to \textbf{compare} 
+values to one another: \textbf{is, ==, is not, !=, $>$, $>=$, $<$, $<=$}.
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> 2 > 3
+False
+>>> 3 >= 3
+True
+>>> 2 is 3
+False
+>>> 2 is not 3
+True
+>>> 2 == 2
+True
+>>> 2 != 2
+False
+\end{lstlisting}
+\vspace{3mm}
+
+Again, each of these operators returns a boolean value; these boolean values will often be used 
+by the statements in the next section, called \textbf{if statements} that will allow you to 
+conditionally perform certain blocks of code.
+
+\pagebreak
+\subsection{If Statements}
+
+\pagebreak
+\subsection{For Loops and Comprehension}
+
+\pagebreak
+\subsection{While Loops and Control of Flow}
+
+First, we will apply the skills described in this section to a Rosalind problem. \\
+\\
+\textbf{Rosalind Problem 2: Transcribing DNA into RNA} \\
+\href{http://rosalind.info/problems/rna/?class=246}{Click here} to visit this problem on Rosalind \\
+\\
+Translation is an important part of bioinformatics; often times we want to translate one value into another, 
+and we can do this in several ways.  In this simple case of translating DNA nucleotides into RNA nucleotides, 
+we can use either \textbf{string substitution} or we can use \textbf{dictionaries}, since we are essentially 
+associating one value with another to translate it.  In this problem, you will write a function to perform 
+this translation task and apply it to the Rosalind problem.  For demonstration purposes, here is a slightly 
+related example that may help in your programming:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> example_string = "ABCDEFG"
+>>> example_string.replace("C", "Z")
+'ABZDEFG'
+\end{lstlisting}
+\vspace{3mm}
+
+Using dictionaries as translation objects requires looping using either loops or using list comprehension 
+syntax:
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> example_string = "AAAACC"
+>>> translator = {"A": "A", "C": "T"}
+>>> "".join([translator[x] for x in list(example_string)])
+'AAAATT'
+\end{lstlisting}
+\vspace{3mm}
+
+The above code first \textbf{splits the string} by calling the \textbf{list} method, coercing it into a list 
+where each value is a single letter.  We then run each letter through the associative array (dictionary) by 
+using \textbf{list comprehension}.  The result is still a list of letters, so we have to \textbf{join} the 
+list back into a single string by calling the \textbf{join} function with no separator.  Below is the 
+step-wise process for demonstration purposes.
+
+\vspace{3mm}
+\begin{lstlisting}
+>>> example_string = "AAAACC"
+>>> translator = {"A": "A", "C": "T"}
+>>> >>> list(example_string)
+['A', 'A', 'A', 'A', 'C', 'C']
+>>> [translator[x] for x in list(example_string)]
+['A', 'A', 'A', 'A', 'T', 'T']
+>>> "".join([translator[x] for x in list(example_string)])
+'AAAATT'
+\end{lstlisting}
+\vspace{3mm}
+
+
+\pagebreak
+\section{Scripting}
+\subsection{Elements of a Python Script}
+
+\pagebreak
+\subsection{Coding Style and Best Practices}
+
+\pagebreak
+\subsection{Parsing Command-line Arguments}
+
+\pagebreak
+\subsection{Reading and Writing Files}
+
+\pagebreak
+\subsection{Case Studies in File Parsing}
+
+\pagebreak
+\section{Object Oriented Programming}
+\subsection{Python as Objects: What is an Object?}
+
+\pagebreak
+\subsection{Classes}
+
+\pagebreak
+\subsection{Namespaces}
+
+\pagebreak
+\subsection{Modules}
+
+\pagebreak
+\section{Retrieving Data from the Internet}
+\subsection{RESTful APIs and the Requests Package}
+
+\pagebreak
+\subsection{Parsing JSON and XML data}
+
+\pagebreak
+\subsection{Interfacing with Bioinformatics Public Resources}
+
+\pagebreak
+\subsection{Version Control and GitHub}
+
+\pagebreak
+\section{Computer Science Fundamentals}
+\subsection{How Code Interfaces with your Machine}
+
+\pagebreak
+\subsection{Computational Cost}
+
+\pagebreak
+\subsection{Algorithm Fundamentals}
+
+\pagebreak
+\section{Project Design}
+
+
+
 
 \end{document}
 
