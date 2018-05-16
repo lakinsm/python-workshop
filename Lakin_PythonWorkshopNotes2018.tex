@@ -24,7 +24,15 @@
 
 \lstset{ 
   basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
-  backgroundcolor=\color{mygray}
+  backgroundcolor=\color{mygray},
+  language=Python,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{cyan},
+  keepspaces=true,
+  columns=flexible,
+  tabsize=1,
+  showstringspaces=false
 }
 
 \title{Introduction to Python Programming and Project Design}
@@ -107,6 +115,7 @@ You will need to make an account on Rosalind to track your progress.
 \pagebreak
 
 \section{Obtaining Help}
+\textbf{Online resources} \\
 Every programmer needs a reference source for learning new skills in a language or to troubleshoot 
 problems encountered during the programming process.  There are many sources of this information, 
 including physical textbooks or manuals.  However, the vast majority of programmers these days utilize 
@@ -118,7 +127,22 @@ codes that you have in order to determine the best path forward in your code.  V
 has encountered the same question or problam as you, and that question will already have been answered 
 on Stack Overflow.  However, if you do ever encounter a novel problem (it has only happened to me twice 
 in my entire programming career), then you can submit a new problem on Stack Overflow and hopefully get 
-the problem solved.  Alternatively, the online Python manual often has answers about the language itself.
+the problem solved.  Alternatively, the online Python manual often has answers about the language itself. \\
+\\
+\textbf{Additional Practice} \\
+As much as workshops help to learn fundamentals of programming, there is no substitute for continual 
+practice.  Many online websites are available that offer code challenges.  If you're looking for 
+more opportunities to practice coding in Python, check out 
+\href{https://www.hackerrank.com/domains/python}{HackerRank's Python challenges} or other similar 
+websites that offer miniature coding sessions with an in-browser interpreter.  Alternatively, 
+try to apply the concepts we're learning here to your own work. \\
+\\
+\textbf{Reference Resources} \\
+I have tried to provide a reference section for commonly used types, objects, and tasks at the end of 
+these notes.  They are not by any means comprehensive, however they might provide a fast reference if 
+that is helpful to you.  The most comprehensive reference will always be the 
+\href{https://docs.python.org/3/}{Python documentation}, 
+however it can be difficult to read at times if your grasp of the language isn't extensive.
 
 \pagebreak
 
@@ -931,12 +955,210 @@ step-wise process for demonstration purposes.
 \pagebreak
 \section{Scripting}
 \subsection{Elements of a Python Script}
+A script is a text-based file that the Python Interpreter expects to contain Python code.  
+It is conventional that these files end in a \textbf{.py suffix}, however that is not a requirement.  
+To start a python script, you'll open a blank text file in a plain-text editor such as 
+notepad or in your IDE of choice (see section 2 for an explanation of IDEs).  \textbf{Do not} 
+use a rich-text editor such as Microsoft Word, as these programs add special characters to your 
+code that can be misinterpreted by the Python Interpreter.  \par
+
+Your Python script should \textbf{first list any imported modules} that you will be using in the remainder 
+of the code, as their functions need to be imported before you use them.  Then, you'll have function 
+definitions for each task that you wish to perform; try to keep functions as specific as possible and not 
+simply lump all of the code into one big function.  At the end of the file, you'll have a statement that 
+may look weird to you, but we'll see it is important to differentiate scripts from module files later on.  
+Finally, in that last code block, you'll call the functions you need in the correct order, and produce output.  
+At that point, you can save the file and run it using your operating system's command prompt or terminal by 
+calling \textbf{python myscript.py}.  Here is an example of a basic Python script that we will call 
+\textbf{numbers.py}:
+
+\vspace{3mm}
+\begin{lstlisting}
+import sys
+
+def write_numbers_out(number_range):
+  for i in range(number_range):
+    print(number_range)
+
+if __name__ == "__main__":
+  write_numbers_out(sys.argv[1])
+\end{lstlisting}
+\vspace{3mm}
+
+There are several aspects of the above code that we haven't encountered yet: \textbf{importing modules} and 
+the \textbf{main conditional declaration} code block.  Importing of modules gives you access to the 
+functions contained within that module; here, we have used the \textbf{sys.argv} object, which creates a list 
+out of all space-separated words that follow a call to the script.  In this case, we would call this script 
+like so: \textbf{python numbers.py 10}.  Because the first \textbf{argument} passed to the numbers.py script 
+has a value of 10, the value of 10 would get stored in the sys.argv list, which we can access using sys.argv[1].  
+Likewise, if we have placed a second number after 10, that would be stored in sys.argv[2], and so on.  The name 
+of the script is stored in sys.argv[0], which would be numbers.py.  We will have more information about 
+\textbf{command-line parsing} later; for now, simply know that we used the sys module to check for additional 
+command-line arguments to the script, passed that argument to the function, which would then print out numbers 
+in that range to the command-line.  \par
+
+The second aspect we hadn't encountered before is the if statement toward the end of the file.  This if statement 
+is not required but is considered best practice if you plan on executing the file directly: it tells the 
+Python Interpreter that \textbf{this is the executable code}.  If you were planning on just defining a 
+set of functions that could be imported into another Python script, then you could include this if 
+statement and the Python Interpreter would only execute code in that if statement if you call the script 
+directly as we have here.  This is useful later for developing modules where we don't want this executable 
+code to be run on import of the module.  \par
+
+Typical scripts are larger than the above example because they include multiple function definitions and 
+usually include more code in the executable code block.  We will see some examples of file parsing scripts 
+later in the case studies section.  For now, let's talk about best practices for coding, since we want to 
+avoid developing poor coding habits early on.
 
 \pagebreak
 \subsection{Coding Style and Best Practices}
+Coding style is a hotly debated subject amongst programmers, however a core set of standards is generally 
+agreed upon in the Python community:
+
+\begin{itemize}
+ \item Function names and arguments should be obviously related to their purpose.
+ \item Functions that are not obvious should be documented well.
+ \item Scripts should be documented with the author and purpose of the script and should be named obviously.
+ \item Module imports should be the first code in the file.
+ \item Global variables (outside of functions) should be defined next and be in all uppercase; however 
+ these generally should be avoided.
+ \item Function definitions should be coded next, and two blank lines should be left between definitions.
+ \item The final code in the file should be the main executable code block.
+ \item Functions and variables should begin with a lower-case letter, while classes begin with an uppercase letter
+\end{itemize}
+
+We will talk more about classes later in the object oriented programming section, but the remainder of the 
+guidelines are relevant to us now.  \textbf{Code commenting} is a way to tell others (or yourself in the future) 
+the purpose of a code block or the script itself.  There are two ways to create a comment in Python, which will 
+be ignored by the Interpreter but still included in the script for other programmers to see: \textbf{the octothorpe 
+or hash} and the \textbf{docstring}.  Octothorpes can be used for single-line code comments, and everything following 
+the octothorpe will be ignored by the Interpreter for that line.  Docstrings can span multiple lines, so they have a 
+beginning and an ending set of symbols to identify the block to be ignored by the Interpreter.  \par
+
+Scripts should begin with a docstring describing the intent of the script, especially if this is a script 
+that will be used by people other than the author.  Functions can also have individual docstrings to 
+describe their \textbf{purpose, arguments, side effects, and return values}.  Single line comments 
+can briefly describe hard-to-interperet variables or single lines of code that you think might be 
+confusing to others.  Here is an example of a well-documented script:
+
+\vspace{3mm}
+\begin{lstlisting}
+"""
+Created on 2018 May 16
+@author: Steven Lakin
+
+This script was written for example. It's purpose is to print numbers to the terminal
+"""
+
+import sys
+
+
+def write_numbers_out(number_range):
+  """
+  Print a consecutive range of numbers to stdout.
+  @number_range: integer, the range from 0 to this number to print
+  """
+  for i in range(number_range):
+    print(number_range)
+
+    
+if __name__ == "__main__":
+  write_numbers_out(sys.argv[1])  # sys.argv stores the command-line input
+\end{lstlisting}
+\vspace{3mm}
+
+On a final note, there is such thing as too much documentation, so be concise, try to make your 
+function names and argument names obvious to avoid unnecessary documentation, and only 
+document where you think is needed.  With good documentation, you'll thank yourself later 
+when you have to reuse or revisit your code.  Now, we can learn more about command-line parsing.  
+From here on out, we will be writing and executing scripts; the Python Interpreter won't play 
+a role other than running the scripts.
 
 \pagebreak
 \subsection{Parsing Command-line Arguments}
+The vast majority of bioinformatics scripts/tools use the 
+\href{https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html}{GNU/POSIX style for 
+command-line interfacing}.  This means that arguments are either positional (required) or optional 
+(short or long versions).  An example is below:
+
+\vspace{3mm}
+\begin{lstlisting}
+python myscript.py positional_arg1 positional_arg2 -o option1 --out optional_output_arg
+\end{lstlisting}
+\vspace{3mm}
+
+The first two arguments are positional and expected to be in order.  The third argument is the \textbf{-o} option 
+followed by its argument; the single hyphen means that this is a ``short-version'' argument.  The final option 
+is the \textbf{--out} option followed by its argument; the double hyphen is the ``long-version'' of this argument.  
+In Python, we can easily make options and parse their command-line arguments by utilizing a Python module called 
+\textbf{argparse}.  This module was specifically designed to handle these style of options, and setting it 
+up is fairly straightforward.  Here is an example:
+
+\vspace{3mm}
+\begin{lstlisting}
+import argparse
+
+
+def repeat_text(text, n_times):
+  for i in range(n_times):
+    print(text)
+
+parser = argparse.ArgumentParser("repeat_text.py")
+parser.add_argument("text", type=str, help="Input text to repeat (required)")
+parser.add_argument("-n", "--n_times", type=int, default=3, help="Number of times to repeat [3]")
+
+if __name__ == "__main__":
+  args = parser.parse_args()
+  repeat_text(args.text, args.n_times)
+
+\end{lstlisting}
+\vspace{3mm}
+
+Note that the variable's values are stored in the args.variable\_name format, which is always the long option name.
+The first argument we added was positional and would be required; we also identified its type as a string.  
+The second argument has both a short and a long version, and we identified its type as integer.  Notice 
+that we also provided a default option, so this argument is not required for the script to run; if this 
+argument were to be excluded, the text would simply repeat 3 times by default.  The help string in each 
+of the argument definitions will be printed to the terminal when the \textbf{help option} is used or 
+when the script is called incorrectly.  Below, we show a correct call to the script and an incorrect 
+call to the script that will prompt the help menu.  Another way to call help is typically -h or --help.
+
+\vspace{3mm}
+\begin{lstlisting}
+python repeat_text.py "Hello World" -n 5
+Hello World
+Hello World
+Hello World
+Hello World
+Hello World
+\end{lstlisting}
+\vspace{3mm}
+
+\vspace{3mm}
+\begin{lstlisting}
+python repeat_text.py 
+usage: repeat_text.py [-h] [-n N_TIMES] text
+repeat_text.py: error: the following arguments are required: text
+
+
+python repeat_text.py --help
+usage: repeat_text.py [-h] [-n N_TIMES] text
+
+positional arguments:
+  text                  Input text to repeat (required)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n N_TIMES, --n_times N_TIMES
+                        Number of times to repeat [3]
+\end{lstlisting}
+\vspace{3mm}
+
+And there you have it; you've created your first bioinformatics command-line tool.  Of 
+course now you'll have to develop some useful functions to go with it, however this is 
+essentially all that goes into most command-line scripts.  In the next section, we will 
+be learning about one of the most common tasks (and by most common I mean about 90\% of 
+bioinformatics scripts) that bioinformaticians perform: file parsing and manipulation.
 
 \pagebreak
 \subsection{Reading and Writing Files}
@@ -965,6 +1187,9 @@ step-wise process for demonstration purposes.
 \subsection{Parsing JSON and XML data}
 
 \pagebreak
+\subsection{Regular Expressions}
+
+\pagebreak
 \subsection{Interfacing with Bioinformatics Public Resources}
 
 \pagebreak
@@ -982,6 +1207,27 @@ step-wise process for demonstration purposes.
 
 \pagebreak
 \section{Project Design}
+
+\pagebreak
+\section{Code Reference}
+\subsection{String Operations}
+
+\subsection{List Operations}
+
+\subsection{Array/Tuple Operations}
+
+\subsection{Dictionary Operations}
+
+\subsection{Set Operations}
+
+\subsection{Input/Output}
+
+\subsection{Iterators/Generators}
+
+\subsection{Zip/Map/Reduce}
+
+\subsection{Regular Expressions}
+
 
 
 
