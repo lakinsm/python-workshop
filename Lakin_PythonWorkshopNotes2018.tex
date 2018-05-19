@@ -18,6 +18,7 @@
     pdfpagemode=UseOutlines
 }
 \usepackage{hypcap}
+\usepackage{url}
 \renewcommand{\familydefault}{\sfdefault}
 
 \definecolor{mygray}{gray}{0.95}
@@ -1162,9 +1163,280 @@ bioinformatics scripts) that bioinformaticians perform: file parsing and manipul
 
 \pagebreak
 \subsection{Reading and Writing Files}
+Python has an easy-to-use interface to read and write files on your computer system.  To 
+open a file connection, you will first need to know the \textbf{file path}, which differs 
+in style depending on if you are running Windows or MacOS for your operating system.  
+Windows file paths use \textbf{back slashes} while MacOS and Linux use \textbf{forward slashes} 
+to represent nested folders.  However, in Python you can simply use forward slashes for both 
+operating systems.
+For example, perhaps your file path might look like this for 
+each system:
+
+\vspace{3mm}
+\begin{lstlisting}
+# Windows
+"C:/My Documents/Folder1/File.txt"
+"C:\\My Documents\\Folder1\\File.txt"
+r"C:\My Documents\Folder1\File.txt"
+
+# MacOS/Linux
+"/home/username/Documents/Folder1/File.txt"
+\end{lstlisting}
+\vspace{3mm}
+
+While it is simplest to use the first convention of just forward slashes, on Windows you can also 
+use the second convention, which \textbf{escapes} the backslash using the backslash escape character, 
+since backslashes have special meaning in Python strings.  Alternatively, you could tell Python that 
+the string is a \textbf{raw string literal}, which means to interpret the string as is; string literals 
+are prefaced by a lower-case r and will be translated into the escaped version when the code is run.  \par
+
+To open a file connection, we will use a convention that only keeps the file open for as long as we need 
+it.  Python will usually be able to detect when a connection should be closed anyway, however this is 
+the safest way of opening and closing a file connection in Python; in some languages, if you leave a 
+file open and don't close it, it will remain locked in the open state until you restart your machine.  
+Python has safeguards against this, however we are still going to use this safety convention, just in case:
+
+\vspace{3mm}
+\begin{lstlisting}
+with open("/path/to/file.txt", "r") as f:
+  data = f.read()
+  # do something with data here
+\end{lstlisting}
+\vspace{3mm}
+
+The \textbf{with open} construction will ensure that when we exit the \textbf{with} code block, the 
+file connection will automatically be closed.  This with construction will open the file connection, 
+however we still have to read the data into a variable so that we can do something with it.  The 
+\textbf{read} function performs this action for us and will read \textbf{the entire file} into 
+memory.  In the next section, we will see that there are other ways of reading a file line by line 
+if the file is very large, and you only want to keep a small amount of the data in memory at a time.  
+Finally, the second argument to the \textbf{open} function is the \textbf{state} of the file connection: 
+\textbf{r for read}, \textbf{w for write}, or \textbf{a for append}.  Reading will leave the file intact 
+and allow us to access the data; writing will \textbf{permanently delete the file} if it already exists, 
+create a new empty file, and allow us to write data into it; append will leave the file intact
+if it already exists and allow 
+us to add on to the end of the file.  If no such file exists with the append option, a new file will be 
+created as if it were a write action, however the second time we run the script, we will duplicate the 
+information.  \par 
+
+On a final note, we often want to iterate over the lines of a file.  The way that your operating system 
+knows where line breaks are in text files is through a special character that doesn't typically get 
+displayed to you unless you are using a raw text editor; these special characters are called 
+\textbf{line endings} and unfortunately differ also by operating system.  Typically, on Windows 
+they are represented as a \textbf{\textbackslash{}r\textbackslash{}n} set of characters, while on MacOS and Linux they are 
+represented as a \textbf{\textbackslash{}n} character.  To handle both, we use a series of two functions, 
+the \textbf{string split} function to split our data variable into a list of lines, and the 
+\textbf{string rstrip} function to remove any potential Windows characters from the right-hand 
+side of each string as we iterate over the lines.  Here's what that looks like for reading an 
+entire file into memory, splitting it by lines, stripping potentially mangled lines, and iterating 
+over those lines so we can do something to them:
+
+\vspace{3mm}
+\begin{lstlisting}
+with open("/path/to/file.txt", "r") as f:
+  data = f.read().split("\n")
+  for line in data:
+    entries = line.rstrip("\r").split()
+    # do something with the list of values stored in entries
+\end{lstlisting}
+\vspace{3mm}
+
+Typically, files are not only separated by line but also have \textbf{fields} that are separated by a 
+\textbf{field separator}, such as in comma-delimited (csv) files.  The most common separators in common 
+bioinformatics file formats include commas (,), tabs (\textbackslash{}t), and white space.  In the example above, 
+we would be splitting each field on white space, however we could also pass the comma or tab character 
+to the second split function in order to split on a different separator.  This then gives us a list of 
+values that we can access like any other list.  In the next section, we will look at some examples 
+of common file parsing functions for bioinformatics file formats.
 
 \pagebreak
 \subsection{Case Studies in File Parsing}
+\textbf{Comma-Separated Values .csv File Parser}
+
+\vspace{3mm}
+\begin{lstlisting}
+import argparse
+
+def parse_csv(filepath):
+  return_values = []
+  with open("/path/to/file.txt", "r") as f:
+    data = f.read().split("\n")
+    for line in data:
+      entries = line.rstrip("\r").split(",")
+      # keep some values for return_values
+      return_values.append([entries[0], entries[3]])
+  return return_values
+
+parser = argparse.ArgumentParser("csv_parser.py")
+parser.add_argument("file", type=str, help="File path to CSV format file")
+
+if __name__ == "__main__":
+  args = parser.parse_args()
+  desired_values = parse_csv(args.file)
+  
+\end{lstlisting}
+\vspace{3mm}
+
+We would then call the above script with 
+python csv\_parser.py \path{/path/to/file.csv}.
+Of course, you would write additional functions to further manipulate the data or write it out 
+to a new file.
+
+
+
+
+
+\pagebreak
+\textbf{Streaming File .csv Parser}
+\vspace{3mm}
+\begin{lstlisting}
+import argparse
+
+def parse_csv(filepath):
+  with open("/path/to/file.txt", "r") as f:
+    while True:
+      line = f.readline()
+      if not line:
+	break
+      entries = line.rstrip("\r").split(",")
+      # send this line back and remain in-place in the file
+      yield entries
+
+parser = argparse.ArgumentParser("streaming_csv_parser.py")
+parser.add_argument("file", type=str, help="File path to CSV format file")
+
+if __name__ == "__main__":
+  args = parser.parse_args()
+  for values in parse_csv(args.file):
+    # do something with each line's values
+\end{lstlisting}
+\vspace{3mm}
+
+The above introduces some new concepts in order to facilitate a line-by-line streaming iteration 
+of the CSV file.  First, instead of iterating over lines within the parsing function, we create a 
+\textbf{while} loop that has no exit condition, read a line into the line variable, detect if this is 
+the end of the file and if so break, and then split the line into values and pause the iteration 
+using a \textbf{yield} statement.  Yield statements are intended to be called from an outer loop; 
+the loop should not be within the function but instead outside of the function.  Note here that 
+in the main code block at the bottom, we call the parse\_csv function within a for loop.  At each 
+iteration within this for loop, a line will be \textbf{yielded} to us and stored in the values 
+variable in the main code block scope.  So effectively, the yield statement allows us to turn a 
+function into an iterable object; a concept that will be covered in more detail in the next section. \par
+
+The benefit of doing this is that we don't have to hold the entire file's contents in memory at once.  
+Imagine if your computer has only 8 gigabytes of memory and you have a file that is 200 gigabytes large; 
+this situation is fairly common in big data analysis like bioinformatics.  In this case, we could 
+use this \textbf{streaming} method to operate on a single line at a time, consuming very little 
+memory with each step.  
+
+\pagebreak
+\textbf{FASTA Format Parser}
+
+\vspace{3mm}
+\begin{lstlisting}
+import argparse
+
+def parse_fasta(filepath):
+    with open(filepath, 'r') as fastaFile:
+        # Skip whitespace
+        while True:
+            line = fastaFile.readline()
+            if line is "":
+                return
+            if line[0] is ">":
+                break
+        # Parse all FASTA entries
+        while True:
+            if line[0] is not ">":
+                raise ValueError("Records in FASTA should begin with '>'")
+            header = line[1:].rstrip()
+            allLines = []
+            line = fastaFile.readline()
+            while True:
+                if not line:
+                    break
+                if line[0] is ">":
+                    break
+                allLines.append(line.rstrip())
+                line = fastaFile.readline()
+            yield header, "".join(allLines).replace(" ", "").replace("\r", "")
+            if not line:
+                return
+
+parser = argparse.ArgumentParser("fasta_parser.py")
+parser.add_argument("file", type=str, help="File path to FASTA format file")
+
+if __name__ == "__main__":
+  args = parser.parse_args()
+  fasta_entries = {header: seq for header, seq in parse_fasta(args.file)}
+\end{lstlisting}
+\vspace{3mm}
+
+The above is a slightly modified version of how the BioPython suite of modules robustly 
+parses FASTA format files.  FASTA format files contain two components: a \textbf{header}, 
+and a \textbf{sequence} of some kind (DNA, RNA, protein, etc).  The only requirement is that 
+the header be on its own line and begin with the greater than sign, and the sequence must 
+be on the lines that follow the header until we encounter either another header or the end 
+of the file.  Because of these loose requirements, we have to detect greater than signs as 
+header lines, but then we cannot assume that the sequence all falls on a single line immediately 
+following this; we have to collect all such lines between this header and the next and yield 
+this header-sequence pair for each iteration.  \par
+
+Building on the concept of the yield statement introduced in the last example, we simply first 
+get rid of any white space that is in the file, which we don't care about.  Once we detect the 
+first greater than sign, we remove the greater than sign and strip any aberrant line endings 
+with a call to rstrip.  Then, we (re)create an empty list called allLines, where we will store 
+all of the lines between this header and the next header.  Then, while we don't encounter another 
+greater than sign or the end of hte file, we append each line to the allLines list.  Finally, 
+once the while loop is broken, we combine the potentially multi-lined sequence and yield the 
+header-sequence pair to the outer loop.  The replace functions in the yield statement are 
+to ensure that there is no white space in the sequence and that the sequence contains no 
+aberrant/mangled line endings that may be typical of Windows text editors.  \par
+
+In the main code block, we load the entire FASTA file into a dictionary using a dictionary 
+comprehension statement; remember that this is technically a method of iteration, and we 
+could have done something similar with a for loop as well.  Additionally, since we are 
+dealing with an iterable function like the last example, we could have chosen to only 
+store one header-sequence pair at a time and use this as kind of a streaming process.  
+However, for this example, we store the entire file as key-value pairs in the fasta\_entries 
+dictionary.  We would then do something with these sequences.  Note that the additional 
+condition that we assumed for this file parser is that every header in the file is unique; 
+otherwise, we wouldn't be able to store them all in the same dictionary, as the keys of a 
+dictionary must be unique.
+
+
+
+\pagebreak
+\textbf{Writing data line by line}
+\vspace{3mm}
+\begin{lstlisting}
+# fasta_sequences is a dictionary with header-sequence pairs
+with open("/path/to/outfile.fasta", "w") as out:
+  for header, sequence in fasta_sequences.items():
+    out.write(">{}\n{}\n".format(header, sequence)
+\end{lstlisting}
+\vspace{3mm}
+
+I wanted to introduce one final topic that is common with file parsing and file I/O: writing 
+a formatted string to an open write-mode file connection.  Here we have a dictionary perhaps 
+containing the header-sequence pairs from the FASTA file in the previous example.  In this case, 
+we need to write it to a new FASTA file, so we open a file connection with a name that we would 
+like for the file and store that file connection in the out variable.  Then, for each header-
+sequence pair in the dictionary, we write the header-sequence pair in the correct format, 
+adding back in the greater than sign and the line breaks between the header and sequence.  
+In this case, we write the whole sequence to a single line.  \par
+
+The way that we have written this string is called \textbf{string formatting} in Python.  We 
+set up any fixed (unchanging) values in each line, and for where we want to put variables, we 
+use a pair of open and closed curly braces.  There are other manipulations you can add inside 
+the curly braces, particularly for formatting decimal point values, however I will leave that 
+as an exercise for the reader to discover if you happen to need that use-case.  In this case, 
+since we are passing strings, we have no need for additional formatting, so we use a set of 
+empty curly braces followed by a call to the format function; this function will pass in our 
+variables to those curly brace placeholders in the order we specify.  Here, we pass in the header
+followed by the sequence to achieve an appropriate FASTA file format.  A final note is to not 
+forget the call to the \textbf{items} function while iterating over dictionaries; this tells 
+python that you want to iterate over both the keys and values in pairs.
 
 \pagebreak
 \section{Object Oriented Programming}
