@@ -19,6 +19,7 @@
 }
 \usepackage{hypcap}
 \usepackage{url}
+\usepackage{graphicx}
 \renewcommand{\familydefault}{\sfdefault}
 
 \definecolor{mygray}{gray}{0.95}
@@ -1417,7 +1418,7 @@ with open("/path/to/outfile.fasta", "w") as out:
 \end{lstlisting}
 \vspace{3mm}
 
-I wanted to introduce one final topic that is common with file parsing and file I/O: writing 
+I wanted to introduce one final topic that is common with file parsing and file Input/Output: writing 
 a formatted string to an open write-mode file connection.  Here we have a dictionary perhaps 
 containing the header-sequence pairs from the FASTA file in the previous example.  In this case, 
 we need to write it to a new FASTA file, so we open a file connection with a name that we would 
@@ -1439,6 +1440,82 @@ forget the call to the \textbf{items} function while iterating over dictionaries
 python that you want to iterate over both the keys and values in pairs.
 
 \pagebreak
+\section{Retrieving Data from the Internet}
+\subsection{RESTful APIs and the Requests Package}
+Perhaps one of the most useful applications of Python's simplicity is in interfacing from 
+your personal computer to resources that are hosted and curated online.  If you've been 
+doing any kind of computational biology, you likely have used one of the international 
+database resources available for storing, retrieving, and searching biological sequence 
+data such as the National Center for Biotechnology Information (NCBI), where the BLAST 
+service is hosted.  If you've ever used BLAST for a single or set or biological sequences, 
+you'll know that BLASTing multiple sequences can be time consuming.  The beauty of these 
+services is that they anticipated the use-case where a user would need to search a 
+large number of sequences or retrieve a large amount of data where manual retrieval 
+through their graphical websites/browser would no longer be feasible from a time 
+perspective.  \par
+
+However, this doesn't apply only to biological resources; many resources on the Internet 
+have information that users wish to access, and those resources have developed a set of 
+standards on how to obtain resources \textbf{on the backend} using programming.  The most 
+common method of interfacing with these resources that you will likely encounter as a 
+bioinformatician is the \textbf{Representational State Transfer (REST) web service}.  Services 
+that use this kind of interface are often referred to as RESTful services.  The REST system 
+provides you, the programmer, with what is called an \textbf{Application Programming Interface (API)} 
+where you can use Python code to request access to their online resources in a specific way.  
+As is typical for Python, a module has been developed to help make this process as seamless and 
+easy as possible; this module is the famous \textbf{Requests} module 
+(\href{http://docs.python-requests.org/en/master/}{Documentation}.  To access this module, 
+you will have to use Pip to install it on your machine: pip install requests. \par
+
+The idea behind RESTful interfaces is that you write code that targets a specific website URL 
+where the service is listening for incoming requests.  In the form of a URL, you will tell the 
+service what kind of action you would like to perform and the information associated with that 
+action; for example, let's say I want to search for all sequences from the Genus \textit{Escherichia} 
+that are present in a certain database.  I would send what is called a \textbf{POST} request that 
+contains an argument specific to the Genus \textit{Escherichia}.  The service would perform the 
+search against its database and store its response, waiting for me to ask for the data.  I would 
+then wait some time and submit a \textbf{GET} request to the service, and the service would 
+pass the response back to me over the Internet in a standardized format.  The format of  
+these POST and GET arguments are typically documented on the service's website, but the 
+overall method of writing the Python code is the same. \par
+
+\includegraphics{images/rest.png}
+
+In this section, we will be writing a small Python script to query the Ensembl REST API, a 
+database that hosts genomic information stored at the European Bioinformatics Institute.  We 
+will search for the reference genome for the bacteriophage \textbf{Escherichia phage ECBP5}, 
+information for which can be found \href{https://www.ebi.ac.uk/ena/data/view/KJ749827}{here}.  
+The \textbf{accession number} for this genome is KJ749827; accession numbers are an agreed-upon 
+unique identifier for a specific biological sequence.  Accession numbers often differ in format 
+depending on the database you're working with, so make sure if you're download many genomes that 
+the accession numbers are of the correct format for the database you're searching.  \par
+
+To get started, we first need to import the \textbf{requests} module and any other modules that 
+we might use.  Then, we will write two functions: one to \textbf{retrieve the sequence of interest} and 
+one to \textbf{write the sequence data to a file}.  Here is the full script with a detailed 
+explanation below:
+
+\pagebreak
+\textbf{query.py}
+\vspace{3mm}
+\begin{lstlisting}
+
+\end{lstlisting}
+\vspace{3mm}
+
+\pagebreak
+\subsection{Parsing JSON data}
+
+\pagebreak
+\subsection{Regular Expressions}
+
+\pagebreak
+\subsection{Interfacing with Bioinformatics Public Resources}
+
+\pagebreak
+\subsection{Version Control and GitHub}
+
+\pagebreak
 \section{Object Oriented Programming}
 \subsection{Python as Objects: What is an Object?}
 
@@ -1450,22 +1527,6 @@ python that you want to iterate over both the keys and values in pairs.
 
 \pagebreak
 \subsection{Modules}
-
-\pagebreak
-\section{Retrieving Data from the Internet}
-\subsection{RESTful APIs and the Requests Package}
-
-\pagebreak
-\subsection{Parsing JSON and XML data}
-
-\pagebreak
-\subsection{Regular Expressions}
-
-\pagebreak
-\subsection{Interfacing with Bioinformatics Public Resources}
-
-\pagebreak
-\subsection{Version Control and GitHub}
 
 \pagebreak
 \section{Computer Science Fundamentals}
